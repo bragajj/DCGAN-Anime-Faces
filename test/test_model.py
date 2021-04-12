@@ -1,6 +1,6 @@
 import unittest
 import torch
-from model import Generator, Discriminator
+from models.model import Generator, Discriminator
 
 
 class TestModels(unittest.TestCase):
