@@ -1,4 +1,3 @@
-import torch
 from easydict import EasyDict as edict
 
 __C = edict()
@@ -18,4 +17,4 @@ FEATURES_GEN = 64
 # Paths and saves
 __C.SAVE_EACH_EPOCH = 2
 __C.OUT_DIR = ""
-__C.SAVE_MODELS_PATH = ""
+__C.SAVE_CHECKPOINT_PATH = ""

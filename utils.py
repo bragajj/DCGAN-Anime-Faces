@@ -28,8 +28,8 @@ def checkpoint(epoch, gen, disc, opt_gen, opt_disc):
         'disc': disc.state_dict(),
         'opt_gen': opt_gen.state_dict(),
         'opt_disc': opt_disc.state_dict(),
-    }, f"{cfg.SAVE_MODELS_PATH}epoch_{epoch}.pth.tar")
-    print(f"=> Checkpoint save to {cfg.SAVE_MODELS_PATH}")
+    }, f"{cfg.SAVE_CHECKPOINT_PATH}epoch_{epoch}.pth.tar")
+    print(f"=> Checkpoint save to {cfg.SAVE_CHECKPOINT_PATH}")
 
 
 def load_checkpoint(checkpoint, gen, disc, opt_gen, opt_disc):
