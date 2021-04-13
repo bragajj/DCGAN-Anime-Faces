@@ -14,10 +14,10 @@ plt.gca().xaxis.set_major_locator(plt.NullLocator())
 plt.gca().yaxis.set_major_locator(plt.NullLocator())
 
 
-class TestModels(unittest.TestCase):
+class TestDataset(unittest.TestCase):
 
     def setUp(self):
-        dataset = AnimeFacesDataset('/home/mirage/Documents/datasets/anime_face_dataset_43k')
+        dataset = AnimeFacesDataset('input path to dataset')
         self.train_dataloader = DataLoader(dataset, batch_size=64, shuffle=True, num_workers=4)
 
     def test_batch(self):
