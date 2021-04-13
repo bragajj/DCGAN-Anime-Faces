@@ -10,7 +10,7 @@ from config import cfg
 def get_mean_std(dataloader):
     channels_sum, channels_squared_sum, num_batches = 0, 0, 0
 
-    for data, _ in tqdm(dataloader, total=len(dataloader)):
+    for data in tqdm(dataloader, total=len(dataloader)):
         channels_sum += torch.mean(data, dim=[0, 2, 3])
         channels_squared_sum += torch.mean(data**2, dim=[0, 2, 3])
         num_batches += 1
