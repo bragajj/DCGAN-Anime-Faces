@@ -1,4 +1,3 @@
-import time
 import os
 import numpy as np
 import losswise
@@ -11,16 +10,16 @@ from IPython import display
 from config import cfg
 
 
-class Metric_logger:
+class MetricLogger:
     """Metric class"""
-    def __init__(self, project_name, losswise_api_key, show_accuracy=False):
+    def __init__(self, project_name, losswise_api_key, show_accuracy=True):
         self.project_name = project_name
         self.losswise_api_key = losswise_api_key
         self.show_acc = show_accuracy
         self.data_subdir = f"{os.path.join(cfg.OUT_DIR, self.project_name)}/imgdata"
 
-        self.loss = {'D':[], 'G':[]}
-        self.acc = {'Dr':[], 'Df':[]}
+        self.loss = {'D': [], 'G': []}
+        self.acc = {'Dr': [], 'Df': []}
 
         if self.losswise_api_key:
             print("init losswise api")
@@ -82,17 +81,17 @@ class Metric_logger:
         if acc_fake and isinstance(acc_fake, torch.autograd.Variable):
             acc_fake = acc_fake.float().mean().item()
 
-        step = Metric_logger._step(epoch, batch_idx, num_batches)
+        step = MetricLogger._step(epoch, batch_idx, num_batches)
 
         self.loss['D'].append(dis_loss)
         self.loss['G'].append(gen_loss)
         if self.show_acc:
-            self.acc['Dr'].append(acc_real) # acc on real data
-            self.acc['Df'].append(acc_fake) # acc on fake data
+            self.acc['Dr'].append(acc_real)  # acc on real data
+            self.acc['Df'].append(acc_fake)  # acc on fake data
             self.graph_acc.append(step, {'D(x)': acc_real, 'D(G(z))': acc_fake})
 
         if self.losswise_api_key:
-            self.losswise_loss.append(step, {'Critic': dis_loss, 'Generator': gen_loss})
+            self.losswise_loss.append(step, {'Discriminator': dis_loss, 'Generator': gen_loss})
 
     @staticmethod
     def _step(epoch, batch_idx, num_batches):
@@ -112,8 +111,7 @@ class Metric_logger:
         horizontal_grid = torchvision.utils.make_grid(images, normalize=normalize, scale_each=True)
         nrows = int(np.sqrt(num_samples))
         grid = torchvision.utils.make_grid(images, nrow=nrows, normalize=normalize, scale_each=True)
-        step = Metric_logger._step(epoch, batch_idx, num_batches)
-        img_name = f'{self.project_name}/images{step}'
+        step = MetricLogger._step(epoch, batch_idx, num_batches)
         self.save_torch_images(horizontal_grid, grid, epoch, batch_idx)
 
     def save_torch_images(self, horizontal_grid, grid, epoch, batch_idx, plot_horizontal=True, figsize=(16, 16)):
@@ -132,12 +130,12 @@ class Metric_logger:
         plt.axis('off')
         if plot_horizontal:
             display.display(plt.gcf())
-        Metric_logger._save_images(fig, epoch, batch_idx, out_dir)
+        MetricLogger._save_images(fig, epoch, batch_idx, out_dir)
         plt.close()
         fig = plt.figure(figsize=(16, 16))
         plt.imshow(np.moveaxis(grid.detach().cpu().numpy(), 0, -1), aspect='auto')
         plt.axis('off')
-        Metric_logger._save_images(fig, epoch, batch_idx, out_dir)
+        MetricLogger._save_images(fig, epoch, batch_idx, out_dir)
         plt.close()
 
     def _close_losswise_session(self):
@@ -156,7 +154,7 @@ class Metric_logger:
 
     @staticmethod
     def _save_images(fig, epoch, batch_idx, out_dir, comment=''):
-        Metric_logger._make_dir(out_dir)
+        MetricLogger._make_dir(out_dir)
         fig.savefig('{}/{}epoch_{}_batch_{}.png'.format(out_dir, comment, epoch, batch_idx))
 
     @staticmethod
