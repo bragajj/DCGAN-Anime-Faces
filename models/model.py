@@ -2,7 +2,7 @@ import torch.nn as nn
 
 
 class Generator(nn.Module):
-    """Standard full convolution generator"""
+    """Full convolution generator"""
     def __init__(self, channels_noise, channels_img, features_gen):
         """
         :param channels_noise: input latent space dimension
@@ -24,7 +24,8 @@ class Generator(nn.Module):
     def _default_block(self, in_channels, out_channels, kernel_size, stride, padding):
         return nn.Sequential(
             nn.ConvTranspose2d(in_channels, out_channels, kernel_size, stride, padding, bias=False),
-            nn.ReLU()
+            nn.BatchNorm2d(out_channels),
+            nn.LeakyReLU(0.2, inplace=True)
         )
 
     def forward(self, x):
@@ -48,7 +49,8 @@ class Discriminator(nn.Module):
     def _default_block(self, in_channels, out_channels, kernel_size, stride, padding):
         return nn.Sequential(
             nn.Conv2d(in_channels, out_channels, kernel_size, stride, padding, bias=False),
-            nn.LeakyReLU(0.2)
+            nn.BatchNorm2d(out_channels),
+            nn.LeakyReLU(0.2, inplace=True)
         )
 
     def forward(self, x):
