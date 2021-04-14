@@ -11,12 +11,12 @@ class Generator(nn.Module):
         """
         super().__init__()
         self.body = nn.Sequential(
-            self._default_block(channels_noise, features_gen * 16, 4, 1, 0),    # 4x4
-            self._default_block(features_gen * 16, features_gen * 8, 4, 2, 1),  # 8x8
-            self._default_block(features_gen * 8, features_gen * 4, 4, 2, 1),   # 16x16
-            self._default_block(features_gen * 4, features_gen * 2, 4, 2, 1),   # 32x32
+            self._default_block(channels_noise, features_gen * 8, 4, 1, 0),    # 4x4
+            self._default_block(features_gen * 8, features_gen * 4, 4, 2, 1),  # 8x8
+            self._default_block(features_gen * 4, features_gen * 2, 4, 2, 1),   # 16x16
+            self._default_block(features_gen * 2, features_gen, 4, 2, 1),   # 32x32
             nn.ConvTranspose2d(
-                features_gen * 2, channels_img, kernel_size=(4, 4), stride=(2, 2), padding=(1, 1)),  # 64x64
+                features_gen, channels_img, kernel_size=(4, 4), stride=(2, 2), padding=(1, 1)),  # 64x64
             nn.Tanh()
             # out dimension: [N x channels_img x 64 x 64]
         )
