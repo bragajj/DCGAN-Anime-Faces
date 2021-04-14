@@ -34,8 +34,7 @@ class MetricLogger:
                 self.graph_acc = self.session.graph('accuracy', kind='max')
             print("Done")
 
-    @staticmethod
-    def display_status(epoch, num_epochs, batch_idx, num_batches, dis_loss, gen_loss, acc_real=None, acc_fake=None):
+    def display_status(self, epoch, num_epochs, batch_idx, num_batches, dis_loss, gen_loss, acc_real=None, acc_fake=None):
         """
         Display training progress
         :param epoch: ``int``, current epoch
@@ -47,13 +46,13 @@ class MetricLogger:
         :param acc_real: ``torch.autograd.Variable``, discriminator predicted on real data
         :param acc_fake: ``torch.autograd.Variable``, discriminator predicted on fake data
         """
-        if dis_loss and isinstance(dis_loss, torch.autograd.Variable):
+        if isinstance(dis_loss, torch.autograd.Variable):
             dis_loss = dis_loss.item()
-        if gen_loss and isinstance(gen_loss, torch.autograd.Variable):
+        if isinstance(gen_loss, torch.autograd.Variable):
             gen_loss = gen_loss.item()
-        if acc_real and isinstance(acc_real, torch.autograd.Variable):
+        if self.show_acc and isinstance(acc_real, torch.autograd.Variable):
             acc_real = acc_real.float().mean().item()
-        if acc_fake and isinstance(acc_fake, torch.autograd.Variable):
+        if self.show_acc and isinstance(acc_fake, torch.autograd.Variable):
             acc_fake = acc_fake.float().mean().item()
 
         print('Batch Num: [{}/{}], Epoch: [{}/{}]'.format(batch_idx, num_batches, epoch, num_epochs))
@@ -72,19 +71,20 @@ class MetricLogger:
         :param acc_real: ``torch.autograd.Variable``, D(x) predicted on real data
         :param acc_fake: ``torch.autograd.Variable``, D(G(z)) paramredicted on fake data
         """
-        if dis_loss and isinstance(dis_loss, torch.autograd.Variable):
+        if isinstance(dis_loss, torch.autograd.Variable):
             dis_loss = dis_loss.item()
-        if gen_loss and isinstance(gen_loss, torch.autograd.Variable):
+        if isinstance(gen_loss, torch.autograd.Variable):
             gen_loss = gen_loss.item()
-        if acc_real and isinstance(acc_real, torch.autograd.Variable):
+        if self.show_acc and isinstance(acc_real, torch.autograd.Variable):
             acc_real = acc_real.float().mean().item()
-        if acc_fake and isinstance(acc_fake, torch.autograd.Variable):
+        if self.show_acc and isinstance(acc_fake, torch.autograd.Variable):
             acc_fake = acc_fake.float().mean().item()
 
         step = MetricLogger._step(epoch, batch_idx, num_batches)
 
         self.loss['D'].append(dis_loss)
         self.loss['G'].append(gen_loss)
+
         if self.show_acc:
             self.acc['Dr'].append(acc_real)  # acc on real data
             self.acc['Df'].append(acc_fake)  # acc on fake data

@@ -18,6 +18,7 @@ def parse_args():
     parser.add_argument('--data_path', dest='data_path', help='path to dataset folder', default=None, type=str)
     parser.add_argument('--api_key', dest='api_key', help='losswise api key', default=None, type=str)
     parser.add_argument('--checkpoint_path', dest='checkpoint_path', help='path to checkpoint', default=None, type=str)
+    parser.add_argument('--out_path', dest='out_path', help='path to output folder', default=None, type=str)
     return parser.parse_args()
 
 
@@ -104,6 +105,10 @@ if __name__ == '__main__':
     args = parse_args()
     assert args.data_path, 'dataset not specified'
 
+    if args.out_path:
+        cfg.OUT_DIR = args.out_path
+        cfg.SAVE_CHECKPOINT_PATH = args.out_path
+
     set_seed(28)
     device = "cuda" if torch.cuda.is_available() else "cpu"
     print(f"=> Called with args {args.__dict__}")
@@ -139,7 +144,7 @@ if __name__ == '__main__':
     start_time = time.time()
     for epoch in range(1, cfg.NUM_EPOCHS + 1):
         train_one_epoch(epoch, dataloader, gen, disc, criterion, opt_gen, opt_disc,
-                        fixed_noise, device, metric_logger, num_samples=32, freq=100)
+                        fixed_noise, device, metric_logger, num_samples=16, freq=100)
         if epoch == cfg.NUM_EPOCHS + 1:
             checkpoint(epoch, gen, disc, opt_gen, opt_disc)
         elif epoch % cfg.SAVE_EACH_EPOCH == 0:
