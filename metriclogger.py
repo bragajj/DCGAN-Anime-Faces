@@ -74,7 +74,7 @@ class MetricLogger:
         if self.show_acc and isinstance(acc_fake, torch.autograd.Variable):
             acc_fake = acc_fake.float().mean().item()
 
-        wandb.log({'d_loss': dis_loss, 'g_loss': gen_loss})
+        wandb.log({'d_loss': dis_loss, 'g_loss': gen_loss, 'D(x)': acc_real, 'D(G(z))': acc_fake})
 
         step = MetricLogger._step(epoch, batch_idx, num_batches)
 
