@@ -3,6 +3,7 @@ import torch
 import torch.nn as nn
 import argparse
 import random
+import wandb
 import numpy as np
 import torch.optim as optim
 from config import cfg
@@ -138,6 +139,9 @@ if __name__ == '__main__':
 
     metric_logger = MetricLogger('DCGAN-default', args.api_key)
 
+    wandb.watch(gen)
+    wandb.watch(disc)
+
     gen.train()
     disc.train()
 
@@ -152,4 +156,3 @@ if __name__ == '__main__':
 
     total_time = time.time() - start_time
     print(f"=> Training time:{total_time}")
-    metric_logger.save_local_metrics()

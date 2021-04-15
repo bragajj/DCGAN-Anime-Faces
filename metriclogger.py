@@ -1,6 +1,6 @@
 import os
 import numpy as np
-import losswise
+import wandb
 import torchvision
 import errno
 import torch
@@ -12,27 +12,22 @@ from config import cfg
 
 class MetricLogger:
     """Metric class"""
-    def __init__(self, project_name, losswise_api_key, show_accuracy=True):
+    def __init__(self, project_name, wab=True, show_accuracy=True):
         self.project_name = project_name
-        self.losswise_api_key = losswise_api_key
         self.show_acc = show_accuracy
         self.data_subdir = f"{os.path.join(cfg.OUT_DIR, self.project_name)}/imgdata"
 
-        self.loss = {'D': [], 'G': []}
-        self.acc = {'Dr': [], 'Df': []}
-
-        if self.losswise_api_key:
-            print("init losswise api")
-            losswise.set_api_key(self.losswise_api_key)
-            self.session = losswise.Session(
-                tag=project_name,
-                max_iter=cfg.NUM_EPOCHS,
-                track_git=False
-            )
-            self.losswise_loss = self.session.graph('loss', kind='min')
-            if self.show_acc:
-                self.graph_acc = self.session.graph('accuracy', kind='max')
-            print("Done")
+        if wab:
+            wandb_id = wandb.util.generate_id()
+            wandb.init(id=wandb_id, project='DCGAN-Anime-Faces', name=project_name)
+            wandb.config.update({
+                'init_lr': cfg.LEARNING_RATE,
+                'noise_z_size': cfg.Z_DIMENSION,
+                'batch_size': cfg.BATCH_SIZE,
+                'initialization_weights': 'Normal Distribution',
+                'beta 1': 0.5,
+                'beta 2': 0.999
+            })
 
     def display_status(self, epoch, num_epochs, batch_idx, num_batches, dis_loss, gen_loss, acc_real=None, acc_fake=None):
         """
@@ -80,18 +75,9 @@ class MetricLogger:
         if self.show_acc and isinstance(acc_fake, torch.autograd.Variable):
             acc_fake = acc_fake.float().mean().item()
 
+        wandb.log({'d_loss': dis_loss, 'g_loss': gen_loss})
+
         step = MetricLogger._step(epoch, batch_idx, num_batches)
-
-        self.loss['D'].append(dis_loss)
-        self.loss['G'].append(gen_loss)
-
-        if self.show_acc:
-            self.acc['Dr'].append(acc_real)  # acc on real data
-            self.acc['Df'].append(acc_fake)  # acc on fake data
-            self.graph_acc.append(step, {'D(x)': acc_real, 'D(G(z))': acc_fake})
-
-        if self.losswise_api_key:
-            self.losswise_loss.append(step, {'Discriminator': dis_loss, 'Generator': gen_loss})
 
     @staticmethod
     def _step(epoch, batch_idx, num_batches):
@@ -137,20 +123,6 @@ class MetricLogger:
         plt.axis('off')
         MetricLogger._save_images(fig, epoch, batch_idx, out_dir)
         plt.close()
-
-    def _close_losswise_session(self):
-        self.session.done()
-
-    def save_local_metrics(self):
-        with open(f'{cfg.OUT_DIR}/loss_g.dt', 'wb') as fp:
-            pickle.dump(self.loss['G'], fp)
-        with open(f'{cfg.OUT_DIR}/loss_d.dt', 'wb') as fp:
-            pickle.dump(self.loss['D'], fp)
-        if self.show_acc:
-            with open(f'{cfg.OUT_DIR}/acc_real.dt', 'wb') as fp:
-                pickle.dump(self.acc['Dr'], fp)
-            with open(f'{cfg.OUT_DIR}/acc_fake.dt', 'wb') as fp:
-                pickle.dump(self.acc['Df'], fp)
 
     @staticmethod
     def _save_images(fig, epoch, batch_idx, out_dir, comment=''):
