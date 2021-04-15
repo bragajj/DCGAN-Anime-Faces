@@ -126,15 +126,16 @@ if __name__ == '__main__':
 
     if args.checkpoint_path:
         cp = torch.load(args.checkpoint_path)
-        load_checkpoint(cp, gen, disc, opt_gen, opt_disc)
+        start_epoch, end_epoch, fixed_noise = load_checkpoint(cp, gen, disc, opt_gen, opt_disc)
     else:
-        print("=> Init default weights of models")
+        print("=> Init default weights of models and fixed noise")
         init_weights(gen)
         init_weights(disc)
+        start_epoch = 1
+        end_epoch = cfg.NUM_EPOCHS
+        fixed_noise = torch.randn(cfg.BATCH_SIZE, cfg.Z_DIMENSION, 1, 1).to(device)
 
     criterion = nn.BCELoss()
-
-    fixed_noise = torch.randn(cfg.BATCH_SIZE, cfg.Z_DIMENSION, 1, 1).to(device)
 
     metric_logger = MetricLogger('DCGAN-default')
 
@@ -145,13 +146,13 @@ if __name__ == '__main__':
     disc.train()
 
     start_time = time.time()
-    for epoch in range(1, cfg.NUM_EPOCHS + 1):
+    for epoch in range(start_epoch, end_epoch + 1):
         train_one_epoch(epoch, dataloader, gen, disc, criterion, opt_gen, opt_disc,
                         fixed_noise, device, metric_logger, num_samples=16, freq=100)
         if epoch == cfg.NUM_EPOCHS + 1:
-            checkpoint(epoch, gen, disc, opt_gen, opt_disc)
+            checkpoint(epoch, end_epoch, gen, disc, opt_gen, opt_disc, fixed_noise)
         elif epoch % cfg.SAVE_EACH_EPOCH == 0:
-            checkpoint(epoch, gen, disc, opt_gen, opt_disc)
+            checkpoint(epoch, end_epoch, gen, disc, opt_gen, opt_disc, fixed_noise)
 
     total_time = time.time() - start_time
     print(f"=> Training time:{total_time}")
