@@ -4,7 +4,6 @@ import wandb
 import torchvision
 import errno
 import torch
-import pickle
 from matplotlib import pyplot as plt
 from IPython import display
 from config import cfg
