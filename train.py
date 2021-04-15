@@ -17,7 +17,6 @@ from utils import checkpoint, load_checkpoint
 def parse_args():
     parser = argparse.ArgumentParser(description='WGAN-GP')
     parser.add_argument('--data_path', dest='data_path', help='path to dataset folder', default=None, type=str)
-    parser.add_argument('--api_key', dest='api_key', help='losswise api key', default=None, type=str)
     parser.add_argument('--checkpoint_path', dest='checkpoint_path', help='path to checkpoint', default=None, type=str)
     parser.add_argument('--out_path', dest='out_path', help='path to output folder', default=None, type=str)
     return parser.parse_args()
@@ -137,7 +136,7 @@ if __name__ == '__main__':
 
     fixed_noise = torch.randn(cfg.BATCH_SIZE, cfg.Z_DIMENSION, 1, 1).to(device)
 
-    metric_logger = MetricLogger('DCGAN-default', args.api_key)
+    metric_logger = MetricLogger('DCGAN-default')
 
     wandb.watch(gen)
     wandb.watch(disc)
