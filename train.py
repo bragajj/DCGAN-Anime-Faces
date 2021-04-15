@@ -116,7 +116,7 @@ if __name__ == '__main__':
     print(f"=> Run on device {device}")
 
     dataset = AnimeFacesDataset(args.data_path)
-    dataloader = DataLoader(dataset, batch_size=cfg.BATCH_SIZE, shuffle=True, num_workers=4)
+    dataloader = DataLoader(dataset, batch_size=cfg.BATCH_SIZE, shuffle=True, num_workers=2)
 
     gen = Generator(cfg.Z_DIMENSION, cfg.CHANNELS_IMG, cfg.FEATURES_GEN).to(device)
     disc = Discriminator(cfg.CHANNELS_IMG, cfg.FEATURES_DISC).to(device)
