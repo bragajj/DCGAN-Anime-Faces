@@ -21,5 +21,5 @@ class AnimeFacesDataset(Dataset):
     def transform(self):
         return transforms.Compose([transforms.Resize((cfg.IMG_SIZE, cfg.IMG_SIZE)),
                                    transforms.ToTensor(),
-                                   transforms.Normalize(mean=[0.7007, 0.6007, 0.5895],
-                                                        std=[0.2938, 0.2973, 0.2702])])
+                                   transforms.Normalize(mean=[0.5, 0.5, 0.5],
+                                                        std=[0.5, 0.5, 0.5])])
