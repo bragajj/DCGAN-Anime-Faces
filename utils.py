@@ -7,6 +7,7 @@ from torch.utils.data import DataLoader
 from config import cfg
 
 
+# not working if generator has tanh() output, because values go outside [-1, 1], therefore generator limited
 def get_mean_std(dataloader):
     channels_sum, channels_squared_sum, num_batches = 0, 0, 0
 
