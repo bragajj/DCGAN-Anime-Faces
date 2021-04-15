@@ -18,7 +18,7 @@ class MetricLogger:
 
         if wab:
             wandb_id = wandb.util.generate_id()
-            wandb.init(id=wandb_id, project='DCGAN-Anime-Faces', name=project_name)
+            wandb.init(id=wandb_id, project='DCGAN-Anime-Faces', name=project_name, resume=True)
             wandb.config.update({
                 'init_lr': cfg.LEARNING_RATE,
                 'noise_z_size': cfg.Z_DIMENSION,
