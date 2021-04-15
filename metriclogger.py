@@ -28,7 +28,8 @@ class MetricLogger:
                 'beta 2': 0.999
             })
 
-    def display_status(self, epoch, num_epochs, batch_idx, num_batches, dis_loss, gen_loss, acc_real=None, acc_fake=None):
+    def display_status(self, epoch, num_epochs, batch_idx, num_batches, dis_loss,
+                       gen_loss, acc_real=None, acc_fake=None):
         """
         Display training progress
         :param epoch: ``int``, current epoch
@@ -75,8 +76,7 @@ class MetricLogger:
             acc_fake = acc_fake.float().mean().item()
 
         wandb.log({'d_loss': dis_loss, 'g_loss': gen_loss, 'D(x)': acc_real, 'D(G(z))': acc_fake})
-
-        step = MetricLogger._step(epoch, batch_idx, num_batches)
+        MetricLogger._step(epoch, batch_idx, num_batches)
 
     @staticmethod
     def _step(epoch, batch_idx, num_batches):
@@ -97,15 +97,14 @@ class MetricLogger:
         nrows = int(np.sqrt(num_samples))
         grid = torchvision.utils.make_grid(images, nrow=nrows, normalize=normalize, scale_each=True)
         step = MetricLogger._step(epoch, batch_idx, num_batches)
-        self.save_torch_images(horizontal_grid, grid, epoch, batch_idx)
+        self.save_torch_images(horizontal_grid, grid, step)
 
-    def save_torch_images(self, horizontal_grid, grid, epoch, batch_idx, plot_horizontal=True, figsize=(16, 16)):
+    def save_torch_images(self, horizontal_grid, grid, step, plot_horizontal=True, figsize=(16, 16)):
         """
         Display and save image grid
         :param horizontal_grid: ``ndarray``, horizontal grid image
         :param grid: ``ndarray``, grid image
-        :param epoch: ``int``, current epoch
-        :param batch_idx: ``int``, current batch
+        :param step: ``int``, step
         :param plot_horizontal: if True plot horizontal grid image
         :param figsize: ``tuple``, figure size
         """
@@ -115,18 +114,18 @@ class MetricLogger:
         plt.axis('off')
         if plot_horizontal:
             display.display(plt.gcf())
-        MetricLogger._save_images(fig, epoch, batch_idx, out_dir)
+        MetricLogger._save_images(fig, out_dir, step)
         plt.close()
         fig = plt.figure(figsize=(16, 16))
         plt.imshow(np.moveaxis(grid.detach().cpu().numpy(), 0, -1), aspect='auto')
         plt.axis('off')
-        MetricLogger._save_images(fig, epoch, batch_idx, out_dir)
+        MetricLogger._save_images(fig, out_dir, step)
         plt.close()
 
     @staticmethod
-    def _save_images(fig, epoch, batch_idx, out_dir, comment=''):
+    def _save_images(fig, out_dir, step):
         MetricLogger._make_dir(out_dir)
-        fig.savefig('{}/{}epoch_{}_batch_{}.png'.format(out_dir, comment, epoch, batch_idx))
+        fig.savefig('{}/img_{}.png'.format(out_dir, step))
 
     @staticmethod
     def _make_dir(directory):
