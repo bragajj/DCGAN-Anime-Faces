@@ -31,7 +31,7 @@ def checkpoint(epoch, end_epoch, gen, disc, opt_gen, opt_disc, fixed_noise):
         'start_epoch': epoch,
         'end_epoch': end_epoch,
         'fixed_noise': fixed_noise
-    }, f"{cfg.SAVE_CHECKPOINT_PATH}epoch_{epoch}.pth.tar")
+    }, f"{cfg.SAVE_CHECKPOINT_PATH}/DCGAN_epoch_{epoch}.pth.tar")
     print(f"=> Checkpoint save to {cfg.SAVE_CHECKPOINT_PATH}")
 
 
