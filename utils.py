@@ -1,5 +1,7 @@
 import torch
 import os
+import random
+import numpy as np
 import argparse
 from tqdm import tqdm
 from data.datasets import AnimeFacesDataset
@@ -51,6 +53,17 @@ def load_gen(gen, filename):
     gen_path = os.path.join(os.getcwd(), filename)
     gen.load_state_dict(torch.load(gen_path))
     print(f"=> Generator model loaded from {gen_path}")
+
+
+def set_seed(val):
+    """
+    Freezes random sequences
+    :param val: ``int`` random value
+    """
+    random.seed(val)
+    np.random.seed(val)
+    torch.manual_seed(val)
+    torch.cuda.manual_seed(val)
 
 
 def parse_args():

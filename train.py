@@ -2,44 +2,30 @@ import time
 import torch
 import torch.nn as nn
 import argparse
-import random
 import wandb
-import numpy as np
 import torch.optim as optim
 from config import cfg
 from data.datasets import AnimeFacesDataset
 from torch.utils.data import DataLoader
 from models.model import Generator, Discriminator, init_weights
 from metriclogger import MetricLogger
-from utils import checkpoint, load_checkpoint
+from utils import checkpoint, load_checkpoint, set_seed
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(description='WGAN-GP')
+    parser = argparse.ArgumentParser(description='Anime-DCGAN')
     parser.add_argument('--data_path', dest='data_path', help='path to dataset folder', default=None, type=str)
-    parser.add_argument('--checkpoint_path', dest='checkpoint_path', help='path to checkpoint', default=None, type=str)
+    parser.add_argument('--checkpoint_path', dest='checkpoint_path', help='path to checkpoint.pth.tar', default=None, type=str)
     parser.add_argument('--out_path', dest='out_path', help='path to output folder', default=None, type=str)
     return parser.parse_args()
 
 
-def set_seed(val):
-    """
-    Freezes random sequences
-    :param val: ``int`` random value
-    """
-    random.seed(val)
-    np.random.seed(val)
-    torch.manual_seed(val)
-    torch.cuda.manual_seed(val)
-    torch.backends.cudnn.deterministic = True
-
-
 def epoch_time(f):
+    """Calculate time of each epoch"""
     def timed(*args, **kwargs):
         ts = time.time()
         result = f(*args, **kwargs)
         te = time.time()
-
         print("epoch time: %2.1f min" % ((te-ts)/60))
         return result
     return timed
@@ -61,10 +47,9 @@ def train_one_epoch(epoch, dataloader, gen, disc, criterion, opt_gen, opt_disc,
     fixed noise (latent space) for image metrics
     :param device: cuda device or cpu
     :param metric_logger: object of MetricLogger
-    :param num_samples: ``int`` well retrievable sqrt() for good result,
+    :param num_samples: ``int`` well retrievable sqrt() (for example: 4, 16, 64) for good result,
     number of samples for grid image metric
     :param freq: ``int``, must be < len(dataloader)`` freq for display results
-    :return:
     """
     for batch_idx, img in enumerate(dataloader):
         real = img.to(device)
@@ -88,7 +73,7 @@ def train_one_epoch(epoch, dataloader, gen, disc, criterion, opt_gen, opt_disc,
         loss_gen.backward()
         opt_gen.step()
 
-        # metrics
+        # logs metrics
         if batch_idx % freq == 0:
             with torch.no_grad():
                 metric_logger.log(epoch, batch_idx, len(dataloader), loss_disc, loss_gen,
@@ -108,7 +93,7 @@ if __name__ == '__main__':
     if args.out_path:
         cfg.OUT_DIR = args.out_path
         cfg.SAVE_CHECKPOINT_PATH = args.out_path
-
+    # set seed
     set_seed(28)
     device = "cuda" if torch.cuda.is_available() else "cpu"
     print(f"=> Called with args {args.__dict__}")
