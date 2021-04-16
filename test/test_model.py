@@ -8,9 +8,9 @@ class TestModels(unittest.TestCase):
     def setUp(self):
         self.N = 8
         self.in_channels = 3
-        self.H = 64
-        self.W = 64
-        self.noise_dim = 100
+        self.H = 128
+        self.W = 128
+        self.noise_dim = 128
         self.x = torch.randn((self.N, self.in_channels, self.H, self.W))
         self.z = torch.randn((self.N, self.noise_dim, 1, 1))
 

@@ -17,12 +17,12 @@ plt.gca().yaxis.set_major_locator(plt.NullLocator())
 class TestDataset(unittest.TestCase):
 
     def setUp(self):
-        dataset = AnimeFacesDataset('input path to dataset')
-        self.train_dataloader = DataLoader(dataset, batch_size=64, shuffle=True, num_workers=4)
+        dataset = AnimeFacesDataset('path to dataset')
+        self.train_dataloader = DataLoader(dataset, batch_size=64, shuffle=True, num_workers=2)
 
     def test_batch(self):
         batch = next(iter(self.train_dataloader))
-        img_grid = torchvision.utils.make_grid(batch)
+        img_grid = torchvision.utils.make_grid(batch, normalize=True)
         plt.imshow(img_grid.permute(1, 2, 0))
         plt.axis('off')
 
