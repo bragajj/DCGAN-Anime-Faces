@@ -5,23 +5,25 @@ class Generator(nn.Module):
     """Full convolution generator"""
     def __init__(self, channels_noise, channels_img, features_gen):
         """
-        :param channels_noise: input latent space dimension
-        :param channels_img: must be 3 for RGB image
-        :param features_gen: deep
+        :param channels_noise: ``int``, input latent space dimension
+        :param channels_img: ``int``,  3 for RGB image or 1 for GrayScale
+        :param features_gen: ``int``, num features of generator
         """
         super().__init__()
         self.body = nn.Sequential(
-            self._default_block(channels_noise, features_gen * 8, 4, 1, 0),    # 4x4
-            self._default_block(features_gen * 8, features_gen * 4, 4, 2, 1),  # 8x8
-            self._default_block(features_gen * 4, features_gen * 2, 4, 2, 1),   # 16x16
-            self._default_block(features_gen * 2, features_gen, 4, 2, 1),   # 32x32
+            Generator._default_block(channels_noise, features_gen * 16, 4, 1, 0),    # 4x4
+            Generator._default_block(features_gen * 16, features_gen * 8, 4, 2, 1),  # 8x8
+            Generator._default_block(features_gen * 8, features_gen * 4, 4, 2, 1),   # 16x16
+            Generator._default_block(features_gen * 4, features_gen * 2, 4, 2, 1),   # 32x32
+            Generator._default_block(features_gen * 2, features_gen, 4, 2, 1),       # 64x64
             nn.ConvTranspose2d(
-                features_gen, channels_img, kernel_size=(4, 4), stride=(2, 2), padding=(1, 1)),  # 64x64
+                features_gen, channels_img, kernel_size=(4, 4), stride=(2, 2), padding=(1, 1)),
             nn.Tanh()
-            # out dimension: [N x channels_img x 64 x 64]
+            # out dimension: [N x 3 x 128 x 128] with range [-1, 1]
         )
 
-    def _default_block(self, in_channels, out_channels, kernel_size, stride, padding):
+    @staticmethod
+    def _default_block(in_channels, out_channels, kernel_size, stride, padding):
         return nn.Sequential(
             nn.ConvTranspose2d(in_channels, out_channels, kernel_size, stride, padding, bias=False),
             nn.BatchNorm2d(out_channels),
@@ -39,14 +41,16 @@ class Discriminator(nn.Module):
         self.body = nn.Sequential(
             nn.Conv2d(in_channels, features_d, kernel_size=(4, 4), stride=(2, 2), padding=(1, 1)),
             nn.LeakyReLU(0.2),
-            self._default_block(features_d, features_d * 2, 4, 2, 1),
-            self._default_block(features_d * 2, features_d * 4, 4, 2, 1),
-            self._default_block(features_d * 4, features_d * 8, 4, 2, 1),
-            nn.Conv2d(features_d * 8, 1, kernel_size=(4, 4), stride=(2, 2), padding=(0, 0)),
-            nn.Sigmoid()
+            Discriminator._default_block(features_d, features_d * 2, 4, 2, 1),
+            Discriminator._default_block(features_d * 2, features_d * 4, 4, 2, 1),
+            Discriminator._default_block(features_d * 4, features_d * 8, 4, 2, 1),
+            Discriminator._default_block(features_d * 8, features_d * 16, 4, 2, 1),
+            nn.Conv2d(features_d * 16, 1, kernel_size=(4, 4), stride=(1, 1), padding=(0, 0)),
+            nn.Sigmoid(),
         )
 
-    def _default_block(self, in_channels, out_channels, kernel_size, stride, padding):
+    @staticmethod
+    def _default_block(in_channels, out_channels, kernel_size, stride, padding):
         return nn.Sequential(
             nn.Conv2d(in_channels, out_channels, kernel_size, stride, padding, bias=False),
             nn.BatchNorm2d(out_channels),
