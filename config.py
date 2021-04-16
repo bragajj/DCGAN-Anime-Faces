@@ -22,3 +22,7 @@ __C.FEATURES_GEN = 64
 __C.SAVE_EACH_EPOCH = 100
 __C.OUT_DIR = ""
 __C.SAVE_CHECKPOINT_PATH = ""
+
+# Display results
+__C.NUM_SAMPLES = 16    # size grid for display images
+__C.FREQ = 100

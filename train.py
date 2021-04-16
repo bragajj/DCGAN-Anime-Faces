@@ -138,7 +138,7 @@ if __name__ == '__main__':
     start_time = time.time()
     for epoch in range(start_epoch, end_epoch + 1):
         train_one_epoch(epoch, dataloader, gen, disc, criterion, opt_gen, opt_disc,
-                        fixed_noise, device, metric_logger, num_samples=16, freq=100)
+                        fixed_noise, device, metric_logger, num_samples=cfg.NUM_SAMPLES, freq=cfg.FREQ)
         if epoch == cfg.NUM_EPOCHS + 1:
             checkpoint(epoch, end_epoch, gen, disc, opt_gen, opt_disc, fixed_noise)
         elif epoch % cfg.SAVE_EACH_EPOCH == 0:
