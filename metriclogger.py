@@ -76,57 +76,36 @@ class MetricLogger:
             acc_fake = acc_fake.float().mean().item()
 
         wandb.log({'d_loss': dis_loss, 'g_loss': gen_loss, 'D(x)': acc_real, 'D(G(z))': acc_fake})
-        MetricLogger._step(epoch, batch_idx, num_batches)
 
-    @staticmethod
-    def _step(epoch, batch_idx, num_batches):
-        return epoch * num_batches + batch_idx
-
-    def log_image(self, images, num_samples, epoch, batch_idx, num_batches, normalize=True):
+    def log_image(self, images, num_samples, normalize=True):
         """
         Create image grid and save it
-        :param images: ``Torch.Tensor(N,C,H,W)``, tensor of images
+        :param images: ``Tor    ch.Tensor(N,C,H,W)``, tensor of images
         :param num_samples: ``int``, number of samples
-        :param epoch: ``int``, current epoch
-        :param batch_idx: ``int``, current batch
-        :param num_batches: ``int``, number of batches
         :param normalize: if True normalize images
         """
         images = images[:num_samples, ...]
-        horizontal_grid = torchvision.utils.make_grid(images, normalize=normalize, scale_each=True)
         nrows = int(np.sqrt(num_samples))
         grid = torchvision.utils.make_grid(images, nrow=nrows, normalize=normalize, scale_each=True)
-        step = MetricLogger._step(epoch, batch_idx, num_batches)
-        self.save_torch_images(horizontal_grid, grid, step)
+        self.save_torch_images(grid)
         wandb.log({'fixed_noise': [wandb.Image(np.moveaxis(grid.detach().cpu().numpy(), 0, -1))]})
 
-    def save_torch_images(self, horizontal_grid, grid, step, plot_horizontal=True, figsize=(16, 16)):
+    def save_torch_images(self, grid):
         """
         Display and save image grid
-        :param horizontal_grid: ``ndarray``, horizontal grid image
         :param grid: ``ndarray``, grid image
-        :param step: ``int``, step
-        :param plot_horizontal: if True plot horizontal grid image
-        :param figsize: ``tuple``, figure size
         """
         out_dir = self.data_subdir
-        fig = plt.figure(figsize=figsize)
-        plt.imshow(np.moveaxis(horizontal_grid.detach().cpu().numpy(), 0, -1))
-        plt.axis('off')
-        if plot_horizontal:
-            display.display(plt.gcf())
-        MetricLogger._save_images(fig, out_dir, step)
-        plt.close()
         fig = plt.figure(figsize=(16, 16))
         plt.imshow(np.moveaxis(grid.detach().cpu().numpy(), 0, -1), aspect='auto')
         plt.axis('off')
-        MetricLogger._save_images(fig, out_dir, step)
+        MetricLogger._save_images(fig, out_dir)
         plt.close()
 
     @staticmethod
-    def _save_images(fig, out_dir, step):
+    def _save_images(fig, out_dir):
         MetricLogger._make_dir(out_dir)
-        fig.savefig('{}/img_{}.png'.format(out_dir, step))
+        fig.savefig('{}/img.png'.format(out_dir))
 
     @staticmethod
     def _make_dir(directory):
