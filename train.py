@@ -76,8 +76,7 @@ def train_one_epoch(epoch, dataloader, gen, disc, criterion, opt_gen, opt_disc,
         # logs metrics
         if batch_idx % freq == 0:
             with torch.no_grad():
-                metric_logger.log(epoch, batch_idx, len(dataloader), loss_disc, loss_gen,
-                                  disc_real, disc_fake)
+                metric_logger.log(loss_disc, loss_gen, disc_real, disc_fake)
                 fake = gen(fixed_noise)
                 metric_logger.log_image(fake, num_samples, epoch,
                                         batch_idx, len(dataloader))
@@ -112,6 +111,7 @@ if __name__ == '__main__':
     if args.checkpoint_path:
         cp = torch.load(args.checkpoint_path)
         start_epoch, end_epoch, fixed_noise = load_checkpoint(cp, gen, disc, opt_gen, opt_disc)
+        cfg.NUM_EPOCHS = end_epoch
     else:
         print("=> Init default weights of models and fixed noise")
         init_weights(gen)

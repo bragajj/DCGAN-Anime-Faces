@@ -5,7 +5,6 @@ import torchvision
 import errno
 import torch
 from matplotlib import pyplot as plt
-from IPython import display
 from config import cfg
 
 
@@ -55,12 +54,9 @@ class MetricLogger:
         if acc_real and acc_fake:
             print('D(x): {:.4f}, D(G(z)): {:.4f}'.format(acc_real, acc_fake))
 
-    def log(self, epoch, batch_idx, num_batches, dis_loss, gen_loss, acc_real=None, acc_fake=None):
+    def log(self, dis_loss, gen_loss, acc_real=None, acc_fake=None):
         """
         Logging values
-        :param epoch: ``int``, current epoch
-        :param batch_idx: ``int``, current batch
-        :param num_batches: ``int``, numbers bathes
         :param dis_loss: ``torch.autograd.Variable``, critical loss
         :param gen_loss: ``torch.autograd.Variable``, generator loss
         :param acc_real: ``torch.autograd.Variable``, D(x) predicted on real data
@@ -77,35 +73,51 @@ class MetricLogger:
 
         wandb.log({'d_loss': dis_loss, 'g_loss': gen_loss, 'D(x)': acc_real, 'D(G(z))': acc_fake})
 
-    def log_image(self, images, num_samples, normalize=True):
+    def log_image(self, images, num_samples, epoch, batch_idx, num_batches, normalize=True):
         """
         Create image grid and save it
         :param images: ``Tor    ch.Tensor(N,C,H,W)``, tensor of images
         :param num_samples: ``int``, number of samples
         :param normalize: if True normalize images
+        :param epoch: ``int``, current epoch
+        :param batch_idx: ``int``, current batch
+        :param num_batches: ``int``, numbers bathes
         """
         images = images[:num_samples, ...]
         nrows = int(np.sqrt(num_samples))
         grid = torchvision.utils.make_grid(images, nrow=nrows, normalize=normalize, scale_each=True)
-        self.save_torch_images(grid)
+        self.save_torch_images(grid, epoch, batch_idx, num_batches)
         wandb.log({'fixed_noise': [wandb.Image(np.moveaxis(grid.detach().cpu().numpy(), 0, -1))]})
 
-    def save_torch_images(self, grid):
+    def save_torch_images(self, grid, epoch, batch_idx, num_batches):
         """
         Display and save image grid
         :param grid: ``ndarray``, grid image
+        :param epoch: ``int``, current epoch
+        :param batch_idx: ``int``, current batch
+        :param num_batches: ``int``, numbers bathes
         """
         out_dir = self.data_subdir
         fig = plt.figure(figsize=(16, 16))
         plt.imshow(np.moveaxis(grid.detach().cpu().numpy(), 0, -1), aspect='auto')
         plt.axis('off')
-        MetricLogger._save_images(fig, out_dir)
+        MetricLogger._save_images(fig, out_dir, epoch, batch_idx, num_batches)
         plt.close()
 
     @staticmethod
-    def _save_images(fig, out_dir):
+    def _save_images(fig, out_dir, epoch, batch_idx, num_batches):
+        """
+        Saves image on drive
+        :param fig: pls.figure object
+        :param out_dir: path to output dir
+        :param epoch: ``int``, current epoch
+        :param batch_idx: ``int``, current batch
+        :param num_batches: ``int``, numbers bathes
+        """
         MetricLogger._make_dir(out_dir)
-        fig.savefig('{}/img.png'.format(out_dir))
+        image_name = f"epoch({str(epoch).zfill(len(str(cfg.NUM_EPOCHS)))})-" \
+                     f"batch({str(batch_idx).zfill(len(str(num_batches)))}).jpg"
+        fig.savefig('{}/{}'.format(out_dir, image_name))
 
     @staticmethod
     def _make_dir(directory):
