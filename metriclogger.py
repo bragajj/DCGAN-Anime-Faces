@@ -98,6 +98,7 @@ class MetricLogger:
         grid = torchvision.utils.make_grid(images, nrow=nrows, normalize=normalize, scale_each=True)
         step = MetricLogger._step(epoch, batch_idx, num_batches)
         self.save_torch_images(horizontal_grid, grid, step)
+        wandb.log({'fixed_noise': [wandb.Image(np.moveaxis(grid.detach().cpu().numpy(), 0, -1))]})
 
     def save_torch_images(self, horizontal_grid, grid, step, plot_horizontal=True, figsize=(16, 16)):
         """
