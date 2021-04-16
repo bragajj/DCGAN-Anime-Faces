@@ -24,6 +24,17 @@ def get_mean_std(dataloader):
     return mean, std
 
 
+def get_random_noise(size, dim, device):
+    """
+     Get random noise from normal distribution
+    :param size: ``int``, number of samples (batch)
+    :param dim: ``int``, dimension
+    :param device: cuda or cpu device
+    :return: Tensor([size, dim, 1, 1])
+    """
+    return torch.randn(size, dim, 1, 1).to(device)
+
+
 def checkpoint(epoch, end_epoch, gen, disc, opt_gen, opt_disc, fixed_noise):
     print("=> Saving checkpoint")
     torch.save({

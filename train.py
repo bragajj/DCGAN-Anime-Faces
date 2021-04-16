@@ -9,7 +9,7 @@ from data.datasets import AnimeFacesDataset
 from torch.utils.data import DataLoader
 from models.model import Generator, Discriminator, init_weights
 from metriclogger import MetricLogger
-from utils import checkpoint, load_checkpoint, set_seed
+from utils import checkpoint, load_checkpoint, set_seed, get_random_noise
 
 
 def parse_args():
@@ -53,7 +53,7 @@ def train_one_epoch(epoch, dataloader, gen, disc, criterion, opt_gen, opt_disc,
     """
     for batch_idx, img in enumerate(dataloader):
         real = img.to(device)
-        noise = torch.randn(cfg.BATCH_SIZE, cfg.Z_DIMENSION, 1, 1).to(device)
+        noise = get_random_noise(cfg.BATCH_SIZE, cfg.Z_DIMENSION, device)
         fake = gen(noise)
 
         # Train discriminator: We maximize log(D(x)) + log(1 - D(G(z))
@@ -92,20 +92,20 @@ if __name__ == '__main__':
     if args.out_path:
         cfg.OUT_DIR = args.out_path
         cfg.SAVE_CHECKPOINT_PATH = args.out_path
-    # set seed
+    # set random seed
     set_seed(28)
     device = "cuda" if torch.cuda.is_available() else "cpu"
     print(f"=> Called with args {args.__dict__}")
     print(f"=> Config params {cfg.__dict__}")
     print(f"=> Run on device {device}")
-
+    # define dataset and dataloader
     dataset = AnimeFacesDataset(args.data_path)
     cfg.DATASET_SIZE = len(dataset)
     dataloader = DataLoader(dataset, batch_size=cfg.BATCH_SIZE, shuffle=True, num_workers=2, drop_last=True)
-
+    # define models
     gen = Generator(cfg.Z_DIMENSION, cfg.CHANNELS_IMG, cfg.FEATURES_GEN).to(device)
     disc = Discriminator(cfg.CHANNELS_IMG, cfg.FEATURES_DISC).to(device)
-
+    # define optimizers
     opt_gen = optim.Adam(gen.parameters(), lr=cfg.LEARNING_RATE, betas=(0.5, 0.999))
     opt_disc = optim.Adam(disc.parameters(), lr=cfg.LEARNING_RATE, betas=(0.5, 0.999))
 
@@ -119,15 +119,19 @@ if __name__ == '__main__':
         init_weights(disc)
         start_epoch = 1
         end_epoch = cfg.NUM_EPOCHS
-        fixed_noise = torch.randn(cfg.BATCH_SIZE, cfg.Z_DIMENSION, 1, 1).to(device)
+        fixed_noise = get_random_noise(cfg.BATCH_SIZE, cfg.Z_DIMENSION, device)
 
+    # define binary cross entropy.
+    # Can be changed to BCEWithLogitsLoss or custom logits loss, then must to replace sigmoid layer from
+    # generator to flatten.
     criterion = nn.BCELoss()
 
     metric_logger = MetricLogger(cfg.PROJECT_VERSION_NAME)
 
+    # gradients metric
     wandb.watch(gen)
     wandb.watch(disc)
-
+    # model mode
     gen.train()
     disc.train()
 
