@@ -3,11 +3,15 @@ from easydict import EasyDict as edict
 __C = edict()
 
 cfg = __C
+# Other
+__C.PROJECT_NAME = "DCGAN-Anime-Faces"
+__C.PROJECT_VERSION_NAME = "Default-DCGAN"
 # Global
 __C.NUM_EPOCHS = 1000
 __C.LEARNING_RATE = 2e-4
 __C.BATCH_SIZE = 128
-# IMG
+__C.DATASET_SIZE = None
+# CHANNELS
 __C.IMG_SIZE = 64
 __C.CHANNELS_IMG = 3
 __C.Z_DIMENSION = 100

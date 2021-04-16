@@ -100,6 +100,7 @@ if __name__ == '__main__':
     print(f"=> Run on device {device}")
 
     dataset = AnimeFacesDataset(args.data_path)
+    cfg.DATASET_SIZE = len(dataset)
     dataloader = DataLoader(dataset, batch_size=cfg.BATCH_SIZE, shuffle=True, num_workers=2)
 
     gen = Generator(cfg.Z_DIMENSION, cfg.CHANNELS_IMG, cfg.FEATURES_GEN).to(device)
@@ -122,7 +123,7 @@ if __name__ == '__main__':
 
     criterion = nn.BCELoss()
 
-    metric_logger = MetricLogger('DCGAN-default')
+    metric_logger = MetricLogger(cfg.PROJECT_VERSION_NAME)
 
     wandb.watch(gen)
     wandb.watch(disc)

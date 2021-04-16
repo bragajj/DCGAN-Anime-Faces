@@ -10,15 +10,21 @@ from config import cfg
 
 class MetricLogger:
     """Metric class"""
-    def __init__(self, project_name, wab=True, show_accuracy=True):
-        self.project_name = project_name
+    def __init__(self, project_version_name, wab=True, show_accuracy=True):
+        """
+        :param project_version_name: name of current version of project
+        :param wab: good realtime metric, you can register free account in https://wandb.ai/
+        :param show_accuracy: if True: show accuracy on real and fake data
+        """
+        self.project_version_name = project_version_name
         self.show_acc = show_accuracy
-        self.data_subdir = f"{os.path.join(cfg.OUT_DIR, self.project_name)}/imgdata"
+        self.data_subdir = f"{os.path.join(cfg.OUT_DIR, self.project_version_name)}/imgdata"
 
         if wab:
             wandb_id = wandb.util.generate_id()
-            wandb.init(id=wandb_id, project='DCGAN-Anime-Faces', name=project_name, resume=True)
+            wandb.init(id=wandb_id, project='DCGAN-Anime-Faces', name=project_version_name, resume=True)
             wandb.config.update({
+                'train_images_count': cfg.DATASET_SIZE,
                 'init_lr': cfg.LEARNING_RATE,
                 'noise_z_size': cfg.Z_DIMENSION,
                 'batch_size': cfg.BATCH_SIZE,
