@@ -19,6 +19,7 @@ def parse_args():
     parser.add_argument('--checkpoint_path', dest='checkpoint_path', help='path to checkpoint.pth.tar', default=None, type=str)
     parser.add_argument('--out_path', dest='out_path', help='path to output folder', default=None, type=str)
     parser.add_argument('--resume_id', dest='resume_id', help='wandb init id for resume metric', default=None, type=str)
+    parser.add_argument('--device', dest='device', help='use device, can be - cpu, cuda, tpu', default='cpu', type=str)
     return parser.parse_args()
 
 
@@ -96,9 +97,9 @@ if __name__ == '__main__':
         cfg.SAVE_CHECKPOINT_PATH = args.out_path
     # set random seed
     if args.seed:
-    	set_seed(args.seed)
+        set_seed(args.seed)
     else:
-    	set_seed(1000)
+        set_seed(1000)
     device = "cuda" if torch.cuda.is_available() else "cpu"
     print(f"=> Called with args {args.__dict__}")
     print(f"=> Config params {cfg.__dict__}")
