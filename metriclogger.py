@@ -10,7 +10,7 @@ from config import cfg
 
 class MetricLogger:
     """Metric class"""
-    def __init__(self, project_version_name, wab=True, show_accuracy=True):
+    def __init__(self, project_version_name, wab=True, show_accuracy=True, resume_id=False):
         """
         :param project_version_name: name of current version of project
         :param wab: good realtime metric, you can register free account in https://wandb.ai/
@@ -21,7 +21,10 @@ class MetricLogger:
         self.data_subdir = f"{os.path.join(cfg.OUT_DIR, self.project_version_name)}/imgdata"
 
         if wab:
-            wandb_id = wandb.util.generate_id()
+            if resume_id:
+                wandb_id = resume_id
+            else:
+                wandb_id = wandb.util.generate_id()
             wandb.init(id=wandb_id, project='DCGAN-Anime-Faces', name=project_version_name, resume=True)
             wandb.config.update({
                 'train_images_count': cfg.DATASET_SIZE,

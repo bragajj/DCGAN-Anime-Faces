@@ -17,6 +17,7 @@ def parse_args():
     parser.add_argument('--data_path', dest='data_path', help='path to dataset folder', default=None, type=str)
     parser.add_argument('--checkpoint_path', dest='checkpoint_path', help='path to checkpoint.pth.tar', default=None, type=str)
     parser.add_argument('--out_path', dest='out_path', help='path to output folder', default=None, type=str)
+    parser.add_argument('--resume_id', dest='resume_id', help='wandb init id for resume metric', default=None, type=str)
     return parser.parse_args()
 
 
@@ -126,7 +127,10 @@ if __name__ == '__main__':
     # generator to flatten.
     criterion = nn.BCELoss()
 
-    metric_logger = MetricLogger(cfg.PROJECT_VERSION_NAME)
+    if args.resume_id:
+        metric_logger = MetricLogger(cfg.PROJECT_VERSION_NAME, resume_id=args.resume_id)
+    else:
+        metric_logger = MetricLogger(cfg.PROJECT_VERSION_NAME)
 
     # gradients metric
     wandb.watch(gen)
