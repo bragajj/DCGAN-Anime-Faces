@@ -15,6 +15,7 @@ from utils import checkpoint, load_checkpoint, set_seed, get_random_noise
 def parse_args():
     parser = argparse.ArgumentParser(description='Anime-DCGAN')
     parser.add_argument('--data_path', dest='data_path', help='path to dataset folder', default=None, type=str)
+    parser.add_argument('--seed', dest='seed', help='seed value', default=None, type=int)
     parser.add_argument('--checkpoint_path', dest='checkpoint_path', help='path to checkpoint.pth.tar', default=None, type=str)
     parser.add_argument('--out_path', dest='out_path', help='path to output folder', default=None, type=str)
     parser.add_argument('--resume_id', dest='resume_id', help='wandb init id for resume metric', default=None, type=str)
@@ -94,7 +95,10 @@ if __name__ == '__main__':
         cfg.OUT_DIR = args.out_path
         cfg.SAVE_CHECKPOINT_PATH = args.out_path
     # set random seed
-    set_seed(28)
+    if args.seed:
+    	set_seed(args.seed)
+    else:
+    	set_seed(1000)
     device = "cuda" if torch.cuda.is_available() else "cpu"
     print(f"=> Called with args {args.__dict__}")
     print(f"=> Config params {cfg.__dict__}")

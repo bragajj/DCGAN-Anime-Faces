@@ -24,5 +24,5 @@ __C.OUT_DIR = ""
 __C.SAVE_CHECKPOINT_PATH = ""
 
 # Display results
-__C.NUM_SAMPLES = 16    # size grid for display images
-__C.FREQ = 100
+__C.NUM_SAMPLES = 36    # size grid for display images
+__C.FREQ = 50
