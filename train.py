@@ -100,7 +100,14 @@ if __name__ == '__main__':
         set_seed(args.seed)
     else:
         set_seed(1000)
-    device = "cuda" if torch.cuda.is_available() else "cpu"
+
+    if args.device == 'cuda':
+        if torch.cuda.is_available():
+            device = "cuda"
+    elif args.device == 'tpu':
+        import torch_xla.core.xla_model as xm
+        device = xm.xla_device()
+
     print(f"=> Called with args {args.__dict__}")
     print(f"=> Config params {cfg.__dict__}")
     print(f"=> Run on device {device}")
