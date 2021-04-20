@@ -118,11 +118,10 @@ if __name__ == '__main__':
     # define models
     gen = Generator(cfg.Z_DIMENSION, cfg.CHANNELS_IMG, cfg.FEATURES_GEN).to(device)
     disc = Discriminator(cfg.CHANNELS_IMG, cfg.FEATURES_DISC).to(device)
-    # define optimizers
-    opt_gen = optim.Adam(gen.parameters(), lr=cfg.LEARNING_RATE, betas=(0.5, 0.999))
-    opt_disc = optim.Adam(disc.parameters(), lr=cfg.LEARNING_RATE, betas=(0.5, 0.999))
 
     if args.checkpoint_path:
+        opt_gen = optim.Adam(gen.parameters(), lr=cfg.LEARNING_RATE, betas=(0.5, 0.999))
+        opt_disc = optim.Adam(disc.parameters(), lr=cfg.LEARNING_RATE, betas=(0.5, 0.999))
         cp = torch.load(args.checkpoint_path)
         start_epoch, end_epoch, fixed_noise = load_checkpoint(cp, gen, disc, opt_gen, opt_disc)
         cfg.NUM_EPOCHS = end_epoch
@@ -130,6 +129,9 @@ if __name__ == '__main__':
         print("=> Init default weights of models and fixed noise")
         init_weights(gen)
         init_weights(disc)
+        # defining optimizers after init weights
+        opt_gen = optim.Adam(gen.parameters(), lr=cfg.LEARNING_RATE, betas=(0.5, 0.999))
+        opt_disc = optim.Adam(disc.parameters(), lr=cfg.LEARNING_RATE, betas=(0.5, 0.999))
         start_epoch = 1
         end_epoch = cfg.NUM_EPOCHS
         fixed_noise = get_random_noise(cfg.BATCH_SIZE, cfg.Z_DIMENSION, device)
