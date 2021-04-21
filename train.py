@@ -114,7 +114,8 @@ if __name__ == '__main__':
     # define dataset and dataloader
     dataset = AnimeFacesDataset(args.data_path)
     cfg.DATASET_SIZE = len(dataset)
-    dataloader = DataLoader(dataset, batch_size=cfg.BATCH_SIZE, shuffle=True, num_workers=2, drop_last=True)
+    dataloader = DataLoader(dataset, batch_size=cfg.BATCH_SIZE, shuffle=True, num_workers=2, drop_last=True,
+                            pin_memory=True)
     # define models
     gen = Generator(cfg.Z_DIMENSION, cfg.CHANNELS_IMG, cfg.FEATURES_GEN).to(device)
     disc = Discriminator(cfg.CHANNELS_IMG, cfg.FEATURES_DISC).to(device)
