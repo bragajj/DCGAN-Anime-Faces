@@ -2,6 +2,7 @@ import os
 from PIL import Image
 from torch.utils.data import Dataset
 from torchvision import transforms
+from config import cfg
 
 
 class AnimeFacesDataset(Dataset):
@@ -21,8 +22,8 @@ class AnimeFacesDataset(Dataset):
 
     @property
     def transform(self):
-        return transforms.Compose([transforms.Resize(136),
-                                   transforms.CenterCrop(128),
+        return transforms.Compose([transforms.Resize(cfg.IMG_SIZE + 8),
+                                   transforms.CenterCrop(cfg.IMG_SIZE),
                                    transforms.RandomHorizontalFlip(),
                                    transforms.ToTensor(),
                                    transforms.Normalize(mean=[0.5, 0.5, 0.5],
