@@ -99,7 +99,7 @@ if __name__ == '__main__':
     if args.seed:
         set_seed(args.seed)
     else:
-        set_seed(1000)
+        set_seed(7889)
 
     if args.device == 'cuda':
         if torch.cuda.is_available():
@@ -127,8 +127,9 @@ if __name__ == '__main__':
         cfg.NUM_EPOCHS = end_epoch
     else:
         print("=> Init default weights of models and fixed noise")
-        init_weights(gen)
-        init_weights(disc)
+        # FIXME sometime (usually) when the weights is initialized from normal distribution can cause mode collapse
+        # init_weights(gen)
+        # init_weights(disc)
         # defining optimizers after init weights
         opt_gen = optim.Adam(gen.parameters(), lr=cfg.LEARNING_RATE, betas=(0.5, 0.999))
         opt_disc = optim.Adam(disc.parameters(), lr=cfg.LEARNING_RATE, betas=(0.5, 0.999))
