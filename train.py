@@ -20,6 +20,7 @@ def parse_args():
     parser.add_argument('--out_path', dest='out_path', help='path to output folder', default=None, type=str)
     parser.add_argument('--resume_id', dest='resume_id', help='wandb init id for resume metric', default=None, type=str)
     parser.add_argument('--device', dest='device', help='use device, can be - cpu, cuda, tpu', default='cpu', type=str)
+    parser.print_help()
     return parser.parse_args()
 
 
