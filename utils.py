@@ -99,7 +99,7 @@ def set_seed(val):
     torch.cuda.manual_seed(val)
 
 
-def show_batch(batch, num_samples=36, figsize=(10, 10), normalize=True, save=False):
+def show_batch(batch, save, num_samples=36, figsize=(10, 10), normalize=True):
     """
     Show image
     :param batch: ``Tensor([N, channels, size, size])`` batch

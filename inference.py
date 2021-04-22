@@ -14,7 +14,8 @@ def parse_args():
     parser.add_argument('--num_samples', dest='num_samples', help='Number of samples', default=1, type=int)
     parser.add_argument('--steps', dest='steps', help='Number of step interpolation', default=5, type=int)
     parser.add_argument('--device', dest='device', help='cpu or gpu', default=None, type=str)
-    parser.add_argument('--out_path', dest='out_path', help='Path to output folder', default=None, type=str)
+    parser.add_argument('--out_path', dest='out_path', help='Path to output folder, default=save to project folder',
+                        default=None, type=str)
     parser.add_argument('--gif', dest='gif', help='Create gif', default=None, type=bool)
     parser.add_argument('--grid', dest='grid', help='Draw grid of images', default=None, type=bool)
     parser.add_argument('--z_size', dest='z_size', help='The size of latent space, default=128', default=128, type=int)
@@ -27,6 +28,11 @@ def parse_args():
 if __name__ == '__main__':
     args = parse_args()
     assert args.path_ckpt, 'Path to checkpoint not specified'
+
+    if not args.out_path:
+        out_path = 'DCGAN-Anime-Faces'
+    else:
+        out_path = args.out_path
 
     if args.device == 'cuda':
         if torch.cuda.is_available():
@@ -42,7 +48,7 @@ if __name__ == '__main__':
         noise = get_random_noise(args.num_samples, args.z_size, device)
         print("==> Generate IMAGE GRID...")
         output = gen(noise)
-        show_batch(output, num_samples=args.num_samples, figsize=(args.img_size, args.img_size))
+        show_batch(output, out_path, num_samples=args.num_samples, figsize=(args.img_size, args.img_size))
     elif args.gif:
         noise = get_random_noise(args.num_samples, args.z_size, device)
         print("==> Generate GIF...")
