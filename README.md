@@ -21,7 +21,7 @@ Interpolation
 ![int](https://github.com/ErrorInever/DCGAN-Anime-Faces/blob/master/data/image_demonstration/__results___27_1.png)
 
 
-Latent space interpolation
+Latent space interpolation (I specially selected good samples for demonstration)
 
 ![z_int](https://github.com/ErrorInever/DCGAN-Anime-Faces/blob/master/data/image_demonstration/int_z_dim.gif)
 
@@ -52,5 +52,5 @@ Latent space interpolation
       --img_size             Size of output image
       --resize               if you want to resize images
 
-   > You can use pretrained weights
+   > You can use pretrained weights,
    > for example: python3 'DCGAN-Anime-Faces/inference.py' --path_ckpt 'data/weights/DCGAN_epoch_50.pth.tar' --num_samples 15 --steps 20 --gif True --resize 128
