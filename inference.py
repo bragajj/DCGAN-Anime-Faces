@@ -20,6 +20,7 @@ def parse_args():
     parser.add_argument('--z_size', dest='z_size', help='The size of latent space, default=128', default=128, type=int)
     parser.add_argument('--img_size', dest='img_size', help='Size of output image', default=6, type=int)
     parser.add_argument('--resize', dest='resize', help='if you want to resize images', default=None, type=int)
+    parser.print_help()
     return parser.parse_args()
 
 
