@@ -27,14 +27,29 @@ Latent space interpolation
 
 
 ## ARGS and runs
-    Args:
-        --data_path : path to dataset folder
-        --seed: set seed value
-        --checkpoint_path: for resume training, path to checkpoint *.pth.tar 
-        --out_path: path for output data
-        --resume_id: resume id for metric Weights & Biases (optional)
-        --device: if you use TPU set it to 'TPU'
-        
-        for example: train.py --data_path /home/animedataset
-        
-    Other paths and other parameters you can set up in config.py
+    optional arguments:
+      --data_path            path to dataset folder
+      --seed                 seed value, default=7889
+      --checkpoint_path      path to checkpoint.pth.tar
+      --out_path             path to output folder
+      --resume_id            wandb id of project for resume metric
+      --device               use device, can be - cpu, cuda, tpu, if not specified: use gpu if available
+
+      Other paths and other parameters you can set up in config.py
+   > for example: python3 train.py --data_path 'anime_dataset'
+    
+   
+## Inference
+    optional arguments:
+      --path_ckpt            Path to checkpoint of model
+      --num_samples          Number of samples
+      --steps                Number of step interpolation
+      --device               cpu or gpu
+      --out_path             Path to output folder, default=save to project folder
+      --gif                  reate gif
+      --grid                 Draw grid of images
+      --z_size               The size of latent space, default=128
+      --img_size             Size of output image
+      --resize               if you want to resize images
+      
+   > for example: python3 'DCGAN-Anime-Faces/inference.py' --path_ckpt 'DCGAN_epoch_50.pth.tar' --num_samples 15 --steps 20 --gif True --resize 128
