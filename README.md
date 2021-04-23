@@ -51,5 +51,6 @@ Latent space interpolation
       --z_size               The size of latent space, default=128
       --img_size             Size of output image
       --resize               if you want to resize images
-      
-   > for example: python3 'DCGAN-Anime-Faces/inference.py' --path_ckpt 'DCGAN_epoch_50.pth.tar' --num_samples 15 --steps 20 --gif True --resize 128
+
+   > You can use pretrained weights
+   > for example: python3 'DCGAN-Anime-Faces/inference.py' --path_ckpt 'data/weights/DCGAN_epoch_50.pth.tar' --num_samples 15 --steps 20 --gif True --resize 128
