@@ -53,7 +53,7 @@ if __name__ == '__main__':
         noise = get_random_noise(args.num_samples, args.z_size, device)
         print("==> Generate GIF...")
         images = latent_space_interpolation_sequence(noise, step_interpolation=args.steps)
-        output = gen(noise)
+        output = gen(images)
         if args.resize and isinstance(args.resize, int):
             print(f"==> Resize images to {args.resize}px")
             output = F.interpolate(output, size=args.resize)

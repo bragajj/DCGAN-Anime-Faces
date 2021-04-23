@@ -2,6 +2,7 @@ import torch
 import random
 import numpy as np
 import argparse
+import os
 import torchvision
 from tqdm import tqdm
 from matplotlib import pyplot as plt
@@ -115,7 +116,8 @@ def show_batch(batch, save, num_samples=36, figsize=(10, 10), normalize=True):
     plt.axis('off')
 
     if save:
-        plt.savefig(save)
+        save_path = os.path.join(save, 'grid_result.png')
+        plt.savefig(save_path)
 
 
 def parse_args():
