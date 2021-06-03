@@ -25,7 +25,7 @@ class MetricLogger:
                 wandb_id = resume_id
             else:
                 wandb_id = wandb.util.generate_id()
-            wandb.init(id=wandb_id, project='DCGAN-Anime-Faces', name=project_version_name, resume=True)
+            wandb.init(id=wandb_id, entity='bragajj', project='DCGAN-Pixel-RPG', name=project_version_name, resume=True, save_code=True)
             wandb.config.update({
                 'train_images_count': cfg.DATASET_SIZE,
                 'init_lr': cfg.LEARNING_RATE,

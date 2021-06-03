@@ -1,0 +1,31 @@
+{
+    "os": "Linux-5.4.0-74-generic-x86_64-with-glibc2.29",
+    "python": "3.8.5",
+    "heartbeatAt": "2021-06-03T16:46:24.050852",
+    "startedAt": "2021-06-03T16:46:23.322260",
+    "docker": null,
+    "gpu": "GeForce RTX 3070",
+    "gpu_count": 1,
+    "cpu_count": 16,
+    "cuda": null,
+    "args": [
+        "--data_path",
+        "train/",
+        "--resume_id",
+        "bragajj",
+        "--device",
+        "cuda"
+    ],
+    "state": "running",
+    "program": "train.py",
+    "codePath": "train.py",
+    "git": {
+        "remote": "https://github.com/ErrorInever/DCGAN-Anime-Faces.git",
+        "commit": "7172edd45f97be94278ca20f807c549bd0d54561"
+    },
+    "email": null,
+    "root": "/home/jeff/Downloads/DCGAN-Anime-Faces",
+    "host": "ML-PC",
+    "username": "jeff",
+    "executable": "/usr/bin/python3"
+}
